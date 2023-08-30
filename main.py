@@ -4,9 +4,6 @@ from pathlib import PurePath
 
 MAIN_DIR = PurePath(__file__).parent
 
-with open(MAIN_DIR.joinpath("sample_text.md"), encoding="utf-8") as file:
-    sample_text = file.read()
-
 
 def add_surrounding_asterisk(match: Match):
     if match.group() is not None:
@@ -24,9 +21,9 @@ def bold_date_and_idiom(text: str):
     return bolded
 
 
-def remove_english_learner_tag():
+def remove_english_learner_tag(text: str):
     pattern = r"@English\sLearners.+"
-    remove_tag = re.sub(pattern, "", sample_text, flags=re.IGNORECASE)
+    remove_tag = re.sub(pattern, "", text, flags=re.IGNORECASE)
     return remove_tag
 
 
@@ -53,12 +50,25 @@ def add_newline_before_equals(text: str):
     add_nl = re.sub(pattern, r"\n\g<1>", text, flags=re.IGNORECASE)
     return add_nl
 
+
+def quote_otd_text(text: str):
+    pattern = r"(.+—\s(?:\d+|\w+).+\d{1,2}\s(?:AM|PM)\n)"
+    to_quote = re.sub(pattern, r"\g<1>> ", text, flags=re.IGNORECASE) 
+    return to_quote
+
+
 if __name__ == "__main__":
-    removed_englearner_tag = remove_english_learner_tag()
+    filename = "sample_text"
+    with open(MAIN_DIR.joinpath(f"{filename}.md"), encoding="utf-8") as file:
+        sample_text = file.read()
+    removed_englearner_tag = remove_english_learner_tag(sample_text)
     removed_poster = remove_poster(removed_englearner_tag)
     del_empty_lines = remove_empty_lines(removed_poster)
     add_nl_submitter = add_newline_between_submitter(del_empty_lines)
     add_nl_equals = add_newline_before_equals(add_nl_submitter)
-    bolded_date_idiom = bold_date_and_idiom(add_nl_equals)
-    with open(MAIN_DIR.joinpath("BOLDED.md"), encoding="utf-8", mode="w") as file:
+    add_quote = quote_otd_text(add_nl_equals)
+    bolded_date_idiom = bold_date_and_idiom(add_quote)
+    with open(
+        MAIN_DIR.joinpath(f"{filename}_BOLDED.md"), encoding="utf-8", mode="w"
+    ) as file:
         file.write(bolded_date_idiom)
