@@ -53,13 +53,14 @@ def add_newline_before_equals(text: str):
 
 def quote_otd_text(text: str):
     pattern = r"(.+—\s(?:\d+|\w+).+\d{1,2}\s(?:AM|PM)\n)"
-    to_quote = re.sub(pattern, r"\g<1>> ", text, flags=re.IGNORECASE) 
+    to_quote = re.sub(pattern, r"\g<1>> ", text, flags=re.IGNORECASE)
     return to_quote
 
 
 if __name__ == "__main__":
     filename = "sample_text"
-    with open(MAIN_DIR.joinpath(f"{filename}.md"), encoding="utf-8") as file:
+    ext = "md"
+    with open(MAIN_DIR.joinpath(f"{filename}{ext}"), encoding="utf-8") as file:
         sample_text = file.read()
     removed_englearner_tag = remove_english_learner_tag(sample_text)
     removed_poster = remove_poster(removed_englearner_tag)
@@ -69,6 +70,6 @@ if __name__ == "__main__":
     add_quote = quote_otd_text(add_nl_equals)
     bolded_date_idiom = bold_date_and_idiom(add_quote)
     with open(
-        MAIN_DIR.joinpath(f"{filename}_BOLDED.md"), encoding="utf-8", mode="w"
+        MAIN_DIR.joinpath(f"{filename}_BOLDED.{ext}"), encoding="utf-8", mode="w"
     ) as file:
         file.write(bolded_date_idiom)
