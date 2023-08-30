@@ -1,8 +1,11 @@
 import re
+from os import listdir
 from re import Match
 from pathlib import PurePath
 
 MAIN_DIR = PurePath(__file__).parent
+RAW = MAIN_DIR.joinpath("raw")
+FORMATTED = MAIN_DIR.joinpath("formatted")
 
 
 def add_surrounding_asterisk(match: Match):
@@ -16,7 +19,7 @@ def replace_poster_with_empty(match: Match):
 
 
 def bold_date_and_idiom(text: str):
-    pattern_all = r"(\d+(?:.+|\s)(?:-|–).+\d+\s?.+?\n(?:Idiom|idiom|Word|word):.+)"
+    pattern_all = r"(\d+(?:.+|\s)(?:-|–).+\d+.+?\n(?:Idiom|idiom|Word|word):.+)"
     bolded = re.sub(pattern_all, add_surrounding_asterisk, text, flags=re.IGNORECASE)
     return bolded
 
@@ -57,19 +60,39 @@ def quote_otd_text(text: str):
     return to_quote
 
 
-if __name__ == "__main__":
-    filename = "sample_text"
-    ext = "md"
-    with open(MAIN_DIR.joinpath(f"{filename}.{ext}"), encoding="utf-8") as file:
+def userinput():
+    raw_files = listdir(RAW)
+    entry = input("type the filename: ")
+    for rawfile in raw_files:
+        if entry.lower() in rawfile.lower():
+            to_format = rawfile
+    with open(RAW.joinpath(to_format), encoding="utf-8") as file:
         sample_text = file.read()
-    removed_englearner_tag = remove_english_learner_tag(sample_text)
+    return to_format, sample_text
+
+
+def save(filename: str, to_write: str, save: bool = True):
+    if save:
+        with open(
+            FORMATTED.joinpath(f"formatted_{filename}"),
+            encoding="utf-8",
+            mode="w",
+        ) as file:
+            file.write(to_write)
+
+
+def main(text: str):
+    removed_englearner_tag = remove_english_learner_tag(text)
     removed_poster = remove_poster(removed_englearner_tag)
     del_empty_lines = remove_empty_lines(removed_poster)
     add_nl_submitter = add_newline_between_submitter(del_empty_lines)
     add_nl_equals = add_newline_before_equals(add_nl_submitter)
     add_quote = quote_otd_text(add_nl_equals)
     bolded_date_idiom = bold_date_and_idiom(add_quote)
-    with open(
-        MAIN_DIR.joinpath(f"{filename}_BOLDED.{ext}"), encoding="utf-8", mode="w"
-    ) as file:
-        file.write(bolded_date_idiom)
+    return bolded_date_idiom
+
+
+if __name__ == "__main__":
+    filename, text = userinput()
+    result = main(text)
+    save(filename, result)
