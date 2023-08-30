@@ -58,9 +58,9 @@ def quote_otd_text(text: str):
 
 
 if __name__ == "__main__":
-    filename = "sample_text"
+    filename = "wotd"
     ext = "md"
-    with open(MAIN_DIR.joinpath(f"{filename}{ext}"), encoding="utf-8") as file:
+    with open(MAIN_DIR.joinpath(f"{filename}.{ext}"), encoding="utf-8") as file:
         sample_text = file.read()
     removed_englearner_tag = remove_english_learner_tag(sample_text)
     removed_poster = remove_poster(removed_englearner_tag)
