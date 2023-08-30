@@ -16,7 +16,7 @@ def replace_poster_with_empty(match: Match):
 
 
 def bold_date_and_idiom(text: str):
-    pattern_all = r"(\d+(?:.+|\s)(?:-|–).+\d+\n(?:Idiom|idiom):.+)"
+    pattern_all = r"(\d+(?:.+|\s)(?:-|–).+\d+\s?.+?\n(?:Idiom|idiom|Word|word):.+)"
     bolded = re.sub(pattern_all, add_surrounding_asterisk, text, flags=re.IGNORECASE)
     return bolded
 
@@ -58,7 +58,7 @@ def quote_otd_text(text: str):
 
 
 if __name__ == "__main__":
-    filename = "wotd"
+    filename = "sample_text"
     ext = "md"
     with open(MAIN_DIR.joinpath(f"{filename}.{ext}"), encoding="utf-8") as file:
         sample_text = file.read()
