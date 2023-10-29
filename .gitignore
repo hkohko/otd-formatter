@@ -4,6 +4,7 @@ __pycache__/
 *$py.class
 Scripts/
 *.cfg
+*.md
 # C extensions
 *.so
 
