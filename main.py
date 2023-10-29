@@ -1,11 +1,18 @@
 import re
 from os import listdir
 from re import Match
-from pathlib import PurePath
+from pathlib import PurePath, Path
 
 MAIN_DIR = PurePath(__file__).parent
 RAW = MAIN_DIR.joinpath("raw")
 FORMATTED = MAIN_DIR.joinpath("formatted")
+is_exist_raw = Path(RAW).exists()
+is_exist_formatted = Path(FORMATTED).exists
+
+if not is_exist_raw:
+    Path(RAW).mkdir()
+if not is_exist_formatted:
+    Path(FORMATTED).mkdir()
 
 
 def add_surrounding_asterisk(match: Match):
@@ -93,6 +100,10 @@ def main(text: str):
 
 
 if __name__ == "__main__":
+    if not is_exist_raw:
+        print(f"created {RAW}")
+    if not is_exist_formatted:
+        print(f"created {FORMATTED}")
     filename, text = userinput()
     result = main(text)
     save(filename, result)
